@@ -1,0 +1,13 @@
+Django
+djangorestframework
+django-crispy-forms
+django-filter
+django-request
+django-guardian
+Markdown
+Pigments
+coreapi
+psycopg2
+requests
+lxml
+bs4
