@@ -1,22 +1,69 @@
 from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from django_filters import rest_framework as filters
 
-from .serializers import (XMLSerializer, NFeSerializer)
+from .serializers import (XMLSerializer, NFeSerializer, UserSerializer)
 
-from .models import (XMLFile, NFe)
+from .models import (XMLFile, NFe, User)
+
+from .permissions import IsSuperUser
 
 # Create your views here.
+
+class UserCreate(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class UsersAPIView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsSuperUser,)
+    #filter_class = UserFilter
+    filter_backends = (filters.DjangoFilterBackend,)
+
+    def get_queryset(self):
+        return User.objects.filter(is_staff=1)
+
+
+class UserAPIView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsSuperUser,)
+
+
+class Logout(APIView):
+    def get(self, request, format=None):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
+class Login(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email,
+            'username': user.name + ' ' + user.last_name
+        })    
+
 
 class XMLsAPIView(generics.ListCreateAPIView):
     queryset = XMLFile.objects.all()
     serializer_class = XMLSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     search_fields = ['id']
     filter_backends = (filters.DjangoFilterBackend,)
@@ -48,15 +95,15 @@ class XMLsAPIView(generics.ListCreateAPIView):
 class XMLAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = XMLFile.objects.all()
     serializer_class = XMLSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     search_fields = ['id']
     filter_backends = (filters.DjangoFilterBackend,)
 
 
-class NFesAPIView(generics.ListCreateAPIView):
+class NFesAPIView(generics.ListAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.DjangoFilterBackend,)
 
     def get_queryset(self):
@@ -68,4 +115,4 @@ class NFesAPIView(generics.ListCreateAPIView):
 class NFeAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
-    permission_classes = (AllowAny,)  
+    permission_classes = (IsAuthenticated,)  

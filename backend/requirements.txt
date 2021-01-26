@@ -11,3 +11,9 @@ psycopg2
 requests
 lxml
 bs4
+django-cors-headers
+oauthlib
+python-social-auth
+requests-oauthlib
+social-auth-app-django
+social-auth-core
