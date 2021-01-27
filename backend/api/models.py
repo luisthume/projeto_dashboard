@@ -6,14 +6,6 @@ from rest_framework.authtoken.models import Token
 
 # Create your models here.
 
-class Base(models.Model):
-    dt_creation = models.DateTimeField(auto_now_add=True)
-    dt_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-
 class User(AbstractUser):
 	username = models.CharField(blank=True, null=True, max_length=50)
 	name = models.CharField(max_length=20)
@@ -26,8 +18,15 @@ class User(AbstractUser):
 		return "{}".format(self.email)
 
 
+class Base(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    dt_creation = models.DateTimeField(auto_now_add=True)
+    dt_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
 class XMLFile(Base):
-    user = models.ForeignKey(User, related_name='users', on_delete=models.CASCADE)
     xml = models.FileField(blank=True, upload_to="xmls/")
 
     class Meta:

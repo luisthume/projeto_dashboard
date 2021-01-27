@@ -1,5 +1,4 @@
 from rest_framework import permissions
-from .models import User
 
 class IsSuperUser(permissions.BasePermission):
 
@@ -9,8 +8,10 @@ class IsSuperUser(permissions.BasePermission):
         return False
 
 class IsOwner(permissions.BasePermission):
-    message = 'You must be the owner of this object.'
+    message = 'You must be the owner.'
+
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated
+
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user

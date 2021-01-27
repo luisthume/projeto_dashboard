@@ -8,12 +8,15 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from django_filters import rest_framework as filters
+from rest_framework.exceptions import APIException
 
 from .serializers import (XMLSerializer, NFeSerializer, UserSerializer)
 
 from .models import (XMLFile, NFe, User)
 
 from .permissions import IsSuperUser, IsOwner
+
+from .filters import XMLFileFilter
 
 # Create your views here.
 
@@ -57,16 +60,34 @@ class Login(ObtainAuthToken):
             'user_id': user.pk,
             'email': user.email,
             'username': user.name + ' ' + user.last_name
-        })    
+        })
 
 
 class XMLsAPIView(generics.ListCreateAPIView):
     queryset = XMLFile.objects.all()
+    permission_classes = (IsAuthenticated,)
     serializer_class = XMLSerializer
-    permission_classes = (IsOwner,)
     parser_classes = (MultiPartParser, FormParser, FileUploadParser)
-    search_fields = ['id']
+    filter_class = XMLFileFilter
     filter_backends = (filters.DjangoFilterBackend,)
+
+    def list(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            queryset = XMLFile.objects.all()
+            serializer = XMLSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(user=self.request.user)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
     def create(self, request, *args, **kwargs):
         """checa se o post data está em um array se não inicia normal"""
@@ -74,7 +95,12 @@ class XMLsAPIView(generics.ListCreateAPIView):
         
         value_list = []
     
-        for i in range(len(data.getlist('xml'))):
+        xmls = len(data.getlist('xml'))
+
+        if xmls == 0:
+            return Response("Not found 'xml' field", status=status.HTTP_403_FORBIDDEN)
+
+        for i in range(xmls):
             values = {}
             for key in data.keys():
 
@@ -92,6 +118,7 @@ class XMLsAPIView(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+
 class XMLAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = XMLFile.objects.all()
     serializer_class = XMLSerializer
@@ -103,7 +130,7 @@ class XMLAPIView(generics.RetrieveUpdateDestroyAPIView):
 class NFesAPIView(generics.ListAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsSuperUser,)
     filter_backends = (filters.DjangoFilterBackend,)
 
     def get_queryset(self):
@@ -115,4 +142,4 @@ class NFesAPIView(generics.ListAPIView):
 class NFeAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsOwner,)
