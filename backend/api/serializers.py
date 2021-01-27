@@ -45,6 +45,7 @@ class XMLSerializer(serializers.ModelSerializer):
         model = XMLFile
         fields = (
             'id',
+            'user',
             'xml',
             'xml_info',
             'dt_creation',

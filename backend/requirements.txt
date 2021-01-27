@@ -17,3 +17,4 @@ python-social-auth
 requests-oauthlib
 social-auth-app-django
 social-auth-core
+djoser

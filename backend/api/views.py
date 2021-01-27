@@ -13,7 +13,7 @@ from .serializers import (XMLSerializer, NFeSerializer, UserSerializer)
 
 from .models import (XMLFile, NFe, User)
 
-from .permissions import IsSuperUser
+from .permissions import IsSuperUser, IsOwner
 
 # Create your views here.
 
@@ -63,7 +63,7 @@ class Login(ObtainAuthToken):
 class XMLsAPIView(generics.ListCreateAPIView):
     queryset = XMLFile.objects.all()
     serializer_class = XMLSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsOwner,)
     parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     search_fields = ['id']
     filter_backends = (filters.DjangoFilterBackend,)
@@ -95,7 +95,7 @@ class XMLsAPIView(generics.ListCreateAPIView):
 class XMLAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = XMLFile.objects.all()
     serializer_class = XMLSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsOwner,)
     search_fields = ['id']
     filter_backends = (filters.DjangoFilterBackend,)
 
@@ -103,7 +103,7 @@ class XMLAPIView(generics.RetrieveUpdateDestroyAPIView):
 class NFesAPIView(generics.ListAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     filter_backends = (filters.DjangoFilterBackend,)
 
     def get_queryset(self):
@@ -115,4 +115,4 @@ class NFesAPIView(generics.ListAPIView):
 class NFeAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
-    permission_classes = (IsAuthenticated,)  
+    permission_classes = (AllowAny,)
