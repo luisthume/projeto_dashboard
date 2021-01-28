@@ -63,8 +63,7 @@ class XMLSerializer(serializers.ModelSerializer):
             os.remove(str(xml))
             xml.delete()
             raise serializers.ValidationError(
-                '{} NFe already in system'.format(xml))
-            
+                '{} NFe already in system'.format(nfe_info['nfe_id']))
         else:
             NFe.objects.create(xml=xml, nfe_id=nfe_info['nfe_id'], emit_cnpj=nfe_info['emit_cnpj'],
                                emit_name=nfe_info['emit_name'], dest_cnpj=nfe_info['dest_cnpj'], dest_name=nfe_info['dest_name'], valor_original_total=nfe_info['valor_original_total'], user_id=xml.user_id)

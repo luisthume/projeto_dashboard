@@ -10,9 +10,9 @@ from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from django_filters import rest_framework as filters
 from rest_framework.exceptions import APIException
 
-from .serializers import (XMLSerializer, NFeSerializer, UserSerializer)
+from .serializers import XMLSerializer, NFeSerializer, UserSerializer
 
-from .models import (XMLFile, NFe, User)
+from .models import XMLFile, NFe, User
 
 from .permissions import IsSuperUser, IsOwner
 
@@ -32,9 +32,6 @@ class UsersAPIView(generics.ListAPIView):
     permission_classes = (IsSuperUser,)
     #filter_class = UserFilter
     filter_backends = (filters.DjangoFilterBackend,)
-
-    def get_queryset(self):
-        return User.objects.filter(is_staff=1)
 
 
 class UserAPIView(generics.RetrieveAPIView):
