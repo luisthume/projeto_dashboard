@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import (XMLFile, NFe, User)
 from .scripts import get_nfe_info
+from django.db.models import Sum, Avg
 import os
-#import requests
+# import requests
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -37,6 +38,7 @@ class NFeSerializer(serializers.ModelSerializer):
             'dest_cnpj',
             'dest_name',
             'valor_original_total',
+            'exit_date',
             'xml',
         )
 
@@ -66,5 +68,48 @@ class XMLSerializer(serializers.ModelSerializer):
                 '{} NFe already in system'.format(nfe_info['nfe_id']))
         else:
             NFe.objects.create(xml=xml, nfe_id=nfe_info['nfe_id'], emit_cnpj=nfe_info['emit_cnpj'],
-                               emit_name=nfe_info['emit_name'], dest_cnpj=nfe_info['dest_cnpj'], dest_name=nfe_info['dest_name'], valor_original_total=nfe_info['valor_original_total'], user_id=xml.user_id)
+                               emit_name=nfe_info['emit_name'], dest_cnpj=nfe_info['dest_cnpj'], dest_name=nfe_info['dest_name'], valor_original_total=nfe_info['valor_original_total'], exit_date=nfe_info['exit_date'],user_id=xml.user_id)
         return xml
+
+
+class DataSerializer(serializers.ModelSerializer):
+    valor_total = serializers.SerializerMethodField()
+    dates =serializers.SerializerMethodField()
+    operation_mean =serializers.SerializerMethodField()
+
+
+    class Meta:
+        model = NFe
+        fields = (
+            'emit_cnpj',
+            'emit_name',
+            'dest_cnpj',
+            'dest_name',
+            'valor_total',
+            'operation_mean',
+            'dates',
+        )
+
+    def get_valor_total(self, instance):
+        id_user = instance.user.id
+        emit_cnpj = instance.emit_cnpj
+        dest_cnpj = instance.dest_cnpj
+
+        obj_nfe = NFe.objects.filter(user=id_user, emit_cnpj=emit_cnpj, dest_cnpj=dest_cnpj)
+        return obj_nfe.aggregate(Sum('valor_original_total'))['valor_original_total__sum']
+
+    def get_dates(self, instance):
+        id_user = instance.user.id
+        emit_cnpj = instance.emit_cnpj
+        dest_cnpj = instance.dest_cnpj
+
+        obj_nfe = NFe.objects.filter(user=id_user, emit_cnpj=emit_cnpj, dest_cnpj=dest_cnpj)
+        return (obj_nfe.values_list('exit_date', flat=True))
+
+    def get_operation_mean(self, instance):
+        id_user = instance.user.id
+        emit_cnpj = instance.emit_cnpj
+        dest_cnpj = instance.dest_cnpj
+
+        obj_nfe = NFe.objects.filter(user=id_user, emit_cnpj=emit_cnpj, dest_cnpj=dest_cnpj)
+        return obj_nfe.aggregate(Avg('valor_original_total'))['valor_original_total__avg']

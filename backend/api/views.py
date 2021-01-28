@@ -10,7 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from django_filters import rest_framework as filters
 from rest_framework.exceptions import APIException
 
-from .serializers import XMLSerializer, NFeSerializer, UserSerializer
+from .serializers import XMLSerializer, NFeSerializer, UserSerializer, DataSerializer
 
 from .models import XMLFile, NFe, User
 
@@ -127,8 +127,25 @@ class XMLAPIView(generics.RetrieveUpdateDestroyAPIView):
 class NFesAPIView(generics.ListAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
-    permission_classes = (IsSuperUser,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.DjangoFilterBackend,)
+
+    def list(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            queryset = XMLFile.objects.all()
+            serializer = XMLSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(user=self.request.user)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)    
 
     def get_queryset(self):
         if self.kwargs.get('nfe_pk'):
@@ -140,3 +157,66 @@ class NFeAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = NFe.objects.all()
     serializer_class = NFeSerializer
     permission_classes = (IsOwner,)
+
+
+class DatasAPIView(generics.ListAPIView):
+    queryset = NFe.objects.all()
+    serializer_class = DataSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = (filters.DjangoFilterBackend,)
+
+    def list(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            queryset = XMLFile.objects.all()
+            serializer = XMLSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(user=self.request.user)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)    
+
+    def get_queryset(self):
+        if self.kwargs.get('nfe_pk'):
+            return self.queryset.filter(company_id = self.kwargs.get('nfe_pk'))
+        return self.queryset.all()
+
+
+'''
+class DatasAPIView(generics.ListAPIView):
+    queryset = Data.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = DataSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+
+    def list(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            queryset = Data.objects.all()
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(user=self.request.user)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class DataView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Data.objects.all()
+    serializer_class = DataSerializer
+    permission_classes = (IsOwner,)
+    search_fields = ['id']
+    filter_backends = (filters.DjangoFilterBackend,)   
+'''

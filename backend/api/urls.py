@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (XMLsAPIView, XMLAPIView, NFesAPIView, NFeAPIView, UserCreate, UserAPIView, UsersAPIView, Login, Logout)
+from .views import (XMLsAPIView, XMLAPIView, NFesAPIView, NFeAPIView, UserCreate, UserAPIView, UsersAPIView, DatasAPIView, Login, Logout)
 
 from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib.auth import views as auth_views
@@ -19,4 +19,6 @@ urlpatterns = [
 
     path('nfes/', NFesAPIView.as_view(),name= 'nfes'),
     path('nfes/<int:pk>', NFeAPIView.as_view(), name='nfe'),    
+
+    path('datas/', DatasAPIView.as_view(),name= 'datas'),
 ]

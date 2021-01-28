@@ -39,12 +39,13 @@ class XMLFile(Base):
 
 
 class NFe(Base):
-    nfe_id = models.CharField(max_length=50)
-    emit_cnpj = models.CharField(max_length=50)
-    emit_name = models.CharField(max_length=50)
-    dest_cnpj = models.CharField(max_length=50)
-    dest_name = models.CharField(max_length=50)
-    valor_original_total = models.CharField(max_length=50)
+    nfe_id = models.CharField(max_length=50, null=True)
+    emit_cnpj = models.CharField(max_length=50, null=True)
+    emit_name = models.CharField(max_length=50, null=True)
+    dest_cnpj = models.CharField(max_length=50, null=True)
+    dest_name = models.CharField(max_length=50, null=True)
+    valor_original_total = models.CharField(max_length=50, null=True)
+    exit_date = models.CharField(max_length=50, null=True)
     xml = models.ForeignKey(XMLFile, related_name='xml_info', on_delete=models.CASCADE)
 
     class Meta:
