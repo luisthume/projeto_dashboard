@@ -28,5 +28,12 @@ services:
     networks:
       web-bridge:
 
+  apache:
+      image: httpd:latest
+      ports:
+        - 80:80
+      volumes:
+        - ./frontend:/usr/local/apache2/htdocs
+
 networks:
-  web-bridge:        
+  web-bridge:

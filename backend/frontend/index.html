@@ -1,0 +1,119 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <select id="select" onchange="selected()">
+        <option value="xmls/">XML</option>
+        <option value="nfes/">NFe</option>
+        <option value="datas/">Data</option>
+    </select>
+    <br>
+    <br>
+    <br>
+    <button onclick="get(url, uri)">GET</button>
+    <br>
+    <br>
+    <input id="fileInput" type="file" accept=".xml" multiple>
+    <button onclick="post(url, uri)">POST</button>
+    <br>
+    <br>
+    <select id="del_select">
+        <option></option>
+    </select>
+    <button onclick="del_request(url, uri, id)">DELETE</button>
+
+    <script>
+        let fileInput = document.getElementById('fileInput');
+        let select = document.getElementById('select');
+        uri = select.value;
+        const url = 'http://127.0.0.1:8000/api/test/'
+        const token = '3e3c01657224cf495ae0f059614e4f4b08cc7e6f'
+
+        function selected() {
+            let select = document.getElementById('select');
+            uri = select.value;
+            console.log(uri)
+        }
+
+
+        function get(url, uri) {
+
+            url = url + uri
+            console.log(url)
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", url);
+            xhttp.setRequestHeader('Authorization', 'Token ' + token)
+            xhttp.send();
+            xhttp.onreadystatechange = (e) => {
+                console.log(xhttp.responseText)
+            }
+        }
+
+        function post(url, uri) {
+
+            url = url + uri
+            var formData = new FormData();
+            const files = fileInput.files
+            for (let i = 0; i < files.length; i++) {
+                formData.append('xml', files[i]);
+            }
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", url, true);
+            xhttp.setRequestHeader('Content-Type', 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW')
+            xhttp.setRequestHeader('Authorization', 'Token ' + token)
+
+            console.log(formData)
+
+            xhttp.send(formData);
+
+            xhttp.onload = (e) => {
+                console.log(xhttp.responseText)
+            }
+        }
+
+        function del_request(url, uri, id) {
+
+            del_select = document.getElementById('del_select');
+            id = del_select.value
+            url = url + uri + id
+            console.log(url)
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("DELETE", url);
+            xhttp.setRequestHeader('Authorization', 'Token ' + token)
+            xhttp.send();
+            xhttp.onreadystatechange = (e) => {
+                get_del_selection();
+            }
+        }
+
+        function get_del_selection() {
+            $.ajax({
+                url: url + 'xmls/',
+                type: "GET",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Token ' + token);
+                },
+                success: function(data) {
+                    $('<select id="del_select"><option></option></select>').replaceAll('#del_select');
+                    $.each(data.results, function(i, data) {
+                        var div_data = "<option value=" + data.id + ">" + data.id + "</option>";
+                        $(div_data).appendTo('#del_select');
+                    });
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            });
+        };
+
+        $(document).ready(get_del_selection());
+    </script>
+</body>
+
+</html>
