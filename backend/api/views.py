@@ -186,37 +186,3 @@ class DatasAPIView(generics.ListAPIView):
         if self.kwargs.get('nfe_pk'):
             return self.queryset.filter(company_id = self.kwargs.get('nfe_pk'))
         return self.queryset.all()
-
-
-'''
-class DatasAPIView(generics.ListAPIView):
-    queryset = Data.objects.all()
-    permission_classes = (IsAuthenticated,)
-    serializer_class = DataSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-
-    def list(self, request, *args, **kwargs):
-        if self.request.user.is_superuser:
-            queryset = Data.objects.all()
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-
-        queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(user=self.request.user)
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
-class DataView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Data.objects.all()
-    serializer_class = DataSerializer
-    permission_classes = (IsOwner,)
-    search_fields = ['id']
-    filter_backends = (filters.DjangoFilterBackend,)   
-'''
