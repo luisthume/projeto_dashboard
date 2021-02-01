@@ -9,3 +9,13 @@ class XMLFileFilter(django_filters.FilterSet):
             "id": ["exact"],
             "user": ["exact"],
         }
+
+class DatasFilter(django_filters.FilterSet):
+    class Meta:
+        model = NFe
+        fields = {
+            "id": ["exact"],
+            "user": ["exact"],
+            "emit_cnpj" : ["exact"],
+            "dest_cnpj" : ["exact"],
+        }    

@@ -16,7 +16,7 @@ from .models import XMLFile, NFe, User
 
 from .permissions import IsSuperUser, IsOwner
 
-from .filters import XMLFileFilter
+from .filters import XMLFileFilter, DatasFilter
 
 # Create your views here.
 
@@ -163,6 +163,7 @@ class DatasAPIView(generics.ListAPIView):
     queryset = NFe.objects.all()
     serializer_class = DataSerializer
     permission_classes = (IsAuthenticated,)
+    filter_class = DatasFilter
     filter_backends = (filters.DjangoFilterBackend,)
 
     def list(self, request, *args, **kwargs):
@@ -180,7 +181,7 @@ class DatasAPIView(generics.ListAPIView):
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)    
+        return Response(serializer.data)
 
     def get_queryset(self):
         if self.kwargs.get('nfe_pk'):

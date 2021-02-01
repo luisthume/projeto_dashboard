@@ -1,0 +1,83 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard with Flexmonster</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <style>
+        table,
+        td,
+        th {
+            border: 1px solid black;
+            font-size: medium;
+            text-align: center;
+        }
+        
+        th,
+        td {
+            padding: 5px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 50%;
+        }
+        
+        th {
+            height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="pivot-table-container" data-url="{% url 'pivot_data' %}"></table>
+    <div id="pivot-chart-container"></div>
+    <script>
+        function processData(dataset) {
+            var result = []
+            dataset = JSON.parse(dataset);
+            dataset.forEach(item => result.push(item.fields));
+            return result;
+        }
+
+        function buildHtmlTable(selector) {
+            var columns = addAllColumnHeaders(myList, selector);
+
+            for (var i = 0; i < myList.length; i++) {
+                var row$ = $('<tr/>');
+                for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                    var cellValue = myList[i][columns[colIndex]];
+                    if (cellValue == null) cellValue = "";
+                    row$.append($('<td/>').html(cellValue));
+                }
+                $(selector).append(row$);
+            }
+        }
+
+
+        function addAllColumnHeaders(myList, selector) {
+            var columnSet = [];
+            var headerTr$ = $('<tr/>');
+
+            for (var i = 0; i < myList.length; i++) {
+                var rowHash = myList[i];
+                for (var key in rowHash) {
+                    if ($.inArray(key, columnSet) == -1) {
+                        columnSet.push(key);
+                        headerTr$.append($('<th/>').html(key));
+                    }
+                }
+            }
+            $(selector).append(headerTr$);
+            return columnSet;
+        }
+
+        $.ajax({
+            url: $("#pivot-table-container").attr("data-url"),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data)
+                myList = processData(data);
+                buildHtmlTable($("#pivot-table-container"));
+            }
+        });
+    </script>
+</body>

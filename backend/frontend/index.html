@@ -2,6 +2,29 @@
 
 <head>
     <meta charset="UTF-8">
+    <style>
+        table,
+        td,
+        th {
+            border: 1px solid black;
+            font-size: medium;
+            text-align: center;
+        }
+        
+        th,
+        td {
+            padding: 5px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 85%;
+        }
+        
+        th {
+            height: 40px;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,7 +39,7 @@
     <br>
     <br>
     <br>
-    <button onclick="get(url, uri)">GET</button>
+    <button onclick="get(url, 'xmls/')">GET</button>
     <br>
     <br>
     <input id="fileInput" type="file" accept=".xml" multiple>
@@ -39,12 +62,69 @@
         let demo = document.getElementById('demo');
         uri = select.value;
         const url = 'http://127.0.0.1:8000/api/test/'
-        const token = '3e3c01657224cf495ae0f059614e4f4b08cc7e6f'
+        const token = '96c1071ef09fdc6e0c5eb41fd6ea1c7491d6d404'
 
         function selected() {
             let select = document.getElementById('select');
             uri = select.value;
             console.log(uri)
+        }
+
+        function xmls_to_demo(data) {
+            $('<table id="demo"><tr><th>ID</th><th>XML</th><th>XML INFO</th><th>CREATION DATE</th><th>UPDATED DATE</th></tr>').replaceAll('#demo');
+            $.each(data.results, function(i, data) {
+                var div_data = `<tr>
+                            <td>${data.id}</td>
+                            <td>${data.xml}</td>
+                            <td>
+                            <ul style="font-size: small;">
+                                <li>NFe: ${data.xml_info[0].nfe_id}</li>                            
+                                <li>CNPJ VENDEDOR: ${data.xml_info[0].dest_cnpj}</li>
+                                <li>NOME DO CNPJ VENDEDOR: ${data.xml_info[0].dest_name}</li>
+                                <li>CNPJ COMPRADOR: ${data.xml_info[0].emit_cnpj}</li>
+                                <li>NOME DO CNPJ COMPRADOR: ${data.xml_info[0].emit_name}</li>
+                                <li>DATA: ${data.xml_info[0].exit_date}</li>
+                                <li>VALOR TOTAL: ${data.xml_info[0].valor_original_total}</li>
+                            </ul>
+                            </td>
+                            <td>${data.dt_creation}</td>
+                            <td>${data.dt_updated}</td>
+                            </tr></table>`;
+                $(div_data).appendTo('#demo');
+            });
+        }
+
+        function nfe_to_demo(data) {
+            $('<table id="demo"><tr><th>ID</th><th>CNPJ VENDEDOR</th><th>NOME DO CNPJ VENDEDOR</th><th>CNPJ COMPRADOR</th><th>NOME DO CNPJ COMPRADOR</th><th>DATA</th><th>VALOR TOTAL</th></tr></table>').replaceAll('#demo');
+            $.each(data.results, function(i, data) {
+                var div_data = `     
+                                <tr>
+                                <th>${data.id}</th>
+                                <td>${data.dest_cnpj}</td>
+                                <td>${data.dest_name}</td>
+                                <td>${data.emit_cnpj}</td>
+                                <td>${data.emit_name}</td>
+                                <td>${data.exit_date}</td>
+                                <td>R\$ ${data.valor_original_total}</td>
+                                </tr>`;
+                $(div_data).appendTo('#demo');
+            });
+        }
+
+        function datas_to_demo(data) {
+            $('<table id="demo"><tr><th>CNPJ VENDEDOR</th><th>NOME DO CNPJ VENDEDOR</th><th>CNPJ COMPRADOR</th><th>NOME DO CNPJ COMPRADOR</th><th>VALOR TOTAL</th><th>MÉDIA DE OPERAÇÃO</th></tr></table>').replaceAll('#demo');
+            $.each(data.results, function(i, data) {
+                var div_data = `     
+                                <tr>                                    
+                                <td>${data.dest_cnpj}</td>
+                                <td>${data.dest_name}</td>
+                                <td>${data.emit_cnpj}</td>
+                                <td>${data.emit_name}</td>
+                                <td>R\$${data.valor_total}</td>
+                                <td>R\$ ${data.operation_mean}</td>
+                                </tr>`;
+                $(div_data).appendTo('#demo');
+            });
         }
 
 
@@ -58,58 +138,27 @@
             xhttp.send();
             if (uri === 'xmls/') {
                 xhttp.onreadystatechange = (e) => {
-                    console.log(JSON.parse(xhttp.response))
 
                     let data = JSON.parse(xhttp.responseText)
-                        //document.getElementById("demo").innerHTML = data.results[0].xml_info[0].id;
-                    $('<label id="demo"></label>').replaceAll('#demo');
-                    $.each(data.results, function(i, data) {
-                        var div_data = `<ul>
-                            <li><h4>ID: ${data.id}</h4></li>
-                            <ul>
-                            <li>XML: ${data.xml}</li>
-                            <p></p>
-                            <ul><li><h4>XML INFO:</h4><li>
-                                <li>${data.xml_info[0].nfe_id}</li>                            
-                                <li>${data.xml_info[0].dest_cnpj}</li>
-                                <li>${data.xml_info[0].dest_name}</li>
-                                <li>${data.xml_info[0].emit_cnpj}</li>
-                                <li>${data.xml_info[0].emit_name}</li>
-                                <li>${data.xml_info[0].exit_date}</li>
-                                <li>${data.xml_info[0].valor_original_total}</li>
-                            </ul>
-                            <p></p>                        
-                            <li>CREATION DATE: ${data.dt_creation}</li>
-                            <li>UPDATED DATE: ${data.dt_updated}</li>
-                            </ul>
-                            </ul>`;
-                        $(div_data).appendTo('#demo');
-                    });
+                    xmls_to_demo(data)
+
                 }
             } else if (uri === 'nfes/') {
                 xhttp.onreadystatechange = (e) => {
 
-                    console.log(JSON.parse(xhttp.response))
-
                     let data = JSON.parse(xhttp.responseText)
-                    $('<label id="demo"></label>').replaceAll('#demo');
-                    $.each(data.results, function(i, data) {
-                        var div_data = `<ul>
-                                <li>ID: ${data.id}</li>                            
-                                <ul>
-                                <li>CNPJ DESTINATÁRIO: ${data.dest_cnpj}</li>
-                                <li>NOME DO CNPJ DESTINATÁRIO: ${data.dest_name}</li>
-                                <li>CNPJ EMISSOR: ${data.emit_cnpj}</li>
-                                <li>NOME DO CNPJ EMISSOR: ${data.emit_name}</li>
-                                <li>DATA: ${data.exit_date}</li>
-                                <li>VALOR TOTAL: R\$ ${data.valor_original_total}</li>
-                                </ul>
-                            </ul>`;
-                        $(div_data).appendTo('#demo');
-                    });
+                    nfe_to_demo(data)
+
+                }
+            } else if (uri === 'datas/') {
+                xhttp.onreadystatechange = (e) => {
+
+                    console.log(JSON.parse(xhttp.responseText))
+                    let data = JSON.parse(xhttp.responseText)
+                    datas_to_demo(data)
+
                 }
             }
-
 
         }
 

@@ -40,13 +40,14 @@ class XMLFile(Base):
 
 class NFe(Base):
     nfe_id = models.CharField(max_length=50, null=True)
-    emit_cnpj = models.CharField(max_length=50, null=True)
-    emit_name = models.CharField(max_length=50, null=True)
-    dest_cnpj = models.CharField(max_length=50, null=True)
-    dest_name = models.CharField(max_length=50, null=True)
-    valor_original_total = models.CharField(max_length=50, null=True)
-    exit_date = models.CharField(max_length=50, null=True)
-    xml = models.ForeignKey(XMLFile, related_name='xml_info', on_delete=models.CASCADE)
+    emit_cnpj = models.CharField(max_length=20, null=True)
+    emit_name = models.CharField(max_length=150, null=True)
+    dest_cnpj = models.CharField(max_length=20, null=True)
+    dest_name = models.CharField(max_length=150, null=True)
+    valor_original_total = models.FloatField(null=True)
+    exit_date = models.DateTimeField(null=True)
+    venc_dates = models.DateTimeField(null=True)    
+    xml = models.ForeignKey(XMLFile, related_name='xml_info', on_delete=models.CASCADE)    
 
     class Meta:
         verbose_name = 'NFe'
@@ -54,4 +55,4 @@ class NFe(Base):
         ordering = ['id']
 
         def __str__(self):
-            return f'{self.nfe_id}'
+            return f'{self.nfe_id}'        
