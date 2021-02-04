@@ -62,7 +62,8 @@ class XMLSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         xml = XMLFile.objects.create(**validated_data)
         nfe_info = get_nfe_info(xml)
-        if len(NFe.objects.filter(nfe_id=nfe_info['nfe_id'])) > 0:
+        user = validated_data['user']
+        if len(NFe.objects.filter(nfe_id=nfe_info['nfe_id'], user=user)) > 0:
             os.remove(str(xml))
             xml.delete()
             raise serializers.ValidationError(
@@ -71,7 +72,7 @@ class XMLSerializer(serializers.ModelSerializer):
             try:
                 NFe.objects.create(xml=xml, nfe_id=nfe_info['nfe_id'], emit_cnpj=nfe_info['emit_cnpj'],
                                    emit_name=nfe_info['emit_name'], dest_cnpj=nfe_info['dest_cnpj'], dest_name=nfe_info['dest_name'], valor_original_total=nfe_info['valor_original_total'], exit_date=nfe_info['exit_date'],user_id=xml.user_id, venc_dates=nfe_info['venc_dates'])
-            except:
+            except TypeError:
                 os.remove(str(xml))
                 xml.delete()
                 raise serializers.ValidationError(

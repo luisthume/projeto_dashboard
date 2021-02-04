@@ -18,6 +18,7 @@ from .permissions import IsSuperUser, IsOwner
 
 from .filters import XMLFileFilter, DatasFilter
 
+from .pagination import CustomPagination
 # Create your views here.
 
 class UserCreate(generics.CreateAPIView):
@@ -165,11 +166,12 @@ class DatasAPIView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_class = DatasFilter
     filter_backends = (filters.DjangoFilterBackend,)
+    pagination_class = CustomPagination
 
     def list(self, request, *args, **kwargs):
         if self.request.user.is_superuser:
-            queryset = XMLFile.objects.all()
-            serializer = XMLSerializer(queryset, many=True)
+            queryset = NFe.objects.all()
+            serializer = NFeSerializer(queryset, many=True)
             return Response(serializer.data)
 
         queryset = self.filter_queryset(self.get_queryset())
