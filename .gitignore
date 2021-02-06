@@ -1,4 +1,7 @@
 xmls/*.*
-api/__pycache__/*.*
+backend/api/__pycache__/*.*
 backend/__pycache__/*.*
 backend/xmls/*.*
+relatorios/.ipynb_checkpoints/*.*
+sunburstTest/.ipynb_checkpoints/*.*
+xmls_test/*.*
