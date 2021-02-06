@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<nfse>
+  <nf>
+    <numero_nfse>2506191536</numero_nfse>
+    <serie_nfse>0</serie_nfse>
+    <data_nfse>27/06/2019</data_nfse>
+    <data_venc>15/07/2019</data_venc>
+    <hora_nfse>15:45:00</hora_nfse>
+    <valor_total>104500,00</valor_total>
+  </nf>
+  <prestador>
+    <cpfcnpj>15191891000188</cpfcnpj>
+  </prestador>
+  <tomador>
+    <cpfcnpj>02403175000175</cpfcnpj>
+    <ie></ie>
+    <nome_razao_social>PELZER SISTEMAS DO BRASIL LTDA</nome_razao_social>
+    <sobrenome_nome_fantasia></sobrenome_nome_fantasia>
+    <logradouro></logradouro>
+    <email></email>
+    <complemento></complemento>
+    <ponto_referencia></ponto_referencia>
+    <bairro></bairro>
+    <cidade></cidade>
+    <cep></cep>
+    <ddd_fone_comercial></ddd_fone_comercial>
+    <fone_comercial></fone_comercial>
+    <ddd_fone_residencial></ddd_fone_residencial>
+    <fone_residencial></fone_residencial>
+    <ddd_fax></ddd_fax>
+    <fone_fax></fone_fax>
+  </tomador>
+</nfse>

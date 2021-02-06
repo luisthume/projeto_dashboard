@@ -1,3 +1,4 @@
 xmls/*.*
 api/__pycache__/*.*
 backend/__pycache__/*.*
+backend/xmls/*.*

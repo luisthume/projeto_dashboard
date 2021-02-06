@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<nfse>
+  <nf>
+    <numero_nfse>315</numero_nfse>
+    <serie_nfse>1</serie_nfse>
+    <data_nfse>21/08/2020</data_nfse>
+    <hora_nfse>14:45:41</hora_nfse>
+    <valor_total>61000,00</valor_total>
+  </nf>
+  <prestador>
+    <cpfcnpj>20514587000164</cpfcnpj>
+  </prestador>
+  <tomador>
+    <cpfcnpj>23104868000137</cpfcnpj>
+    <ie></ie>
+    <nome_razao_social> UCHOA E LAUFFER LTDA ME</nome_razao_social>
+    <sobrenome_nome_fantasia></sobrenome_nome_fantasia>
+    <logradouro></logradouro>
+    <email>asyom9@hotmail.com</email>
+    <complemento></complemento>
+    <ponto_referencia></ponto_referencia>
+    <bairro></bairro>
+    <cidade>Altamira</cidade>
+    <cep>68371163</cep>
+    <ddd_fone_comercial>93991399089</ddd_fone_comercial>
+    <fone_comercial></fone_comercial>
+    <ddd_fone_residencial></ddd_fone_residencial>
+    <fone_residencial></fone_residencial>
+    <ddd_fax></ddd_fax>
+    <fone_fax></fone_fax>
+  </tomador>
+</nfse>
