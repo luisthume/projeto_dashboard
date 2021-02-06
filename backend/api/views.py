@@ -18,7 +18,9 @@ from .permissions import IsSuperUser, IsOwner
 
 from .filters import XMLFileFilter, DatasFilter
 
-from .pagination import CustomPagination
+from .pagination import DatasPagination, DatasCSVPagination
+
+from rest_framework_csv.renderers import CSVRenderer
 # Create your views here.
 
 class UserCreate(generics.CreateAPIView):
@@ -166,7 +168,7 @@ class DatasAPIView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_class = DatasFilter
     filter_backends = (filters.DjangoFilterBackend,)
-    pagination_class = CustomPagination
+    pagination_class = DatasPagination
 
     def list(self, request, *args, **kwargs):
         if self.request.user.is_superuser:
@@ -189,3 +191,10 @@ class DatasAPIView(generics.ListAPIView):
         if self.kwargs.get('nfe_pk'):
             return self.queryset.filter(company_id = self.kwargs.get('nfe_pk'))
         return self.queryset.all()
+
+class DatasCSVAPIView(generics.ListAPIView):
+    queryset = NFe.objects.all()
+    serializer_class = DataSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = DatasCSVPagination
+    renderer_classes = (CSVRenderer,)

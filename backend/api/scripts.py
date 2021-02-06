@@ -27,8 +27,8 @@ def get_nfe_info(file_name):
     valor_original_total = bs_content.find(
         'cobr').find('fat').find('vorig').text
 
-    venc_dates = bs_content.find('cobr').find('dup').find('dvenc').text
-    venc_dates = [int(i) for i in venc_dates.split('-')]
+    venc_dates = [i.find('dvenc').text.split('-') for i in bs_content.find('cobr').find_all('dup')]
+    venc_dates = [datetime.datetime(int(i[0]), int(i[1]), int(i[2])).isoformat() for i in venc_dates]
 
     return {'nfe_id': nfe_id,
             'emit_cnpj': emit_cnpj,
@@ -37,5 +37,5 @@ def get_nfe_info(file_name):
             'dest_name': dest_nome,
             'valor_original_total': valor_original_total,
             'exit_date': dateparse.parse_datetime(exit_date),
-            'venc_dates': datetime.datetime(venc_dates[0], venc_dates[1], venc_dates[2])
+            'venc_dates': venc_dates
             }

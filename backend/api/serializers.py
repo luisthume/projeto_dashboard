@@ -72,7 +72,7 @@ class XMLSerializer(serializers.ModelSerializer):
             try:
                 NFe.objects.create(xml=xml, nfe_id=nfe_info['nfe_id'], emit_cnpj=nfe_info['emit_cnpj'],
                                    emit_name=nfe_info['emit_name'], dest_cnpj=nfe_info['dest_cnpj'], dest_name=nfe_info['dest_name'], valor_original_total=nfe_info['valor_original_total'], exit_date=nfe_info['exit_date'],user_id=xml.user_id, venc_dates=nfe_info['venc_dates'])
-            except TypeError:
+            except IndexError:#TypeError:
                 os.remove(str(xml))
                 xml.delete()
                 raise serializers.ValidationError(
@@ -95,6 +95,7 @@ class DataSerializer(serializers.ModelSerializer):
             'valor_total',
             'operation_mean',
             'dates',
+            'venc_dates',
         )
 
     def get_valor_total(self, instance):
@@ -116,4 +117,4 @@ class DataSerializer(serializers.ModelSerializer):
         dest_cnpj = instance.dest_cnpj
 
         obj_nfe = NFe.objects.filter(emit_cnpj=emit_cnpj, dest_cnpj=dest_cnpj)
-        return (obj_nfe.values_list('exit_date', flat=True))
+        return (tuple(obj_nfe.values_list('exit_date', flat=True)))

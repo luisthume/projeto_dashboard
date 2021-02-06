@@ -19,3 +19,4 @@ social-auth-app-django
 social-auth-core
 django-cors-headers
 mysqlclient
+djangorestframework-csv

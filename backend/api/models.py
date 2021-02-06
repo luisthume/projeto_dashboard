@@ -46,7 +46,7 @@ class NFe(Base):
     dest_name = models.CharField(max_length=150, null=True)
     valor_original_total = models.FloatField(null=True)
     exit_date = models.DateTimeField(null=True)
-    venc_dates = models.DateTimeField(null=True)    
+    venc_dates = models.CharField(max_length=500,null=True)
     xml = models.ForeignKey(XMLFile, related_name='xml_info', on_delete=models.CASCADE)    
 
     class Meta:
