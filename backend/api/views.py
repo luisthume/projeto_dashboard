@@ -10,9 +10,9 @@ from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from django_filters import rest_framework as filters
 from rest_framework.exceptions import APIException
 
-from .serializers import XMLSerializer, NFeSerializer, UserSerializer, DataSerializer
+from .serializers import XMLSerializer, NFeSerializer, UserSerializer, DataSerializer, CNAESerializer
 
-from .models import XMLFile, NFe, User
+from .models import XMLFile, NFe, User, CNAE
 
 from .permissions import IsSuperUser, IsOwner
 
@@ -198,3 +198,8 @@ class DatasCSVAPIView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = DatasCSVPagination
     renderer_classes = (CSVRenderer,)
+
+class CNAEAPIView(generics.ListAPIView):
+    queryset = CNAE.objects.all()
+    serializer_class = CNAESerializer
+    permission_classes = (IsAuthenticated,)

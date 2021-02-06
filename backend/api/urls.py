@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (XMLsAPIView, XMLAPIView, NFesAPIView, NFeAPIView, UserCreate, UserAPIView, UsersAPIView, DatasAPIView, Login, Logout, DatasCSVAPIView)
+from .views import (XMLsAPIView, XMLAPIView, NFesAPIView, NFeAPIView, UserCreate, UserAPIView, UsersAPIView, DatasAPIView, Login, Logout, DatasCSVAPIView, CNAEAPIView)
 
 from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib.auth import views as auth_views
@@ -23,4 +23,6 @@ urlpatterns = [
     path('datas/', DatasAPIView.as_view(),name= 'datas'),
 
     path('datasCSV/', DatasCSVAPIView.as_view(),name= 'datasCSV'),
+
+    path('cnaes/', CNAEAPIView.as_view(),name= 'cnaes'),
 ]

@@ -30,6 +30,13 @@ def get_nfe_info(file_name):
     venc_dates = [i.find('dvenc').text.split('-') for i in bs_content.find('cobr').find_all('dup')]
     venc_dates = [datetime.datetime(int(i[0]), int(i[1]), int(i[2])).isoformat() for i in venc_dates]
 
+    ncm = [int(i.text) for i in bs_content.find_all('ncm')]
+
+    try:
+        cnae = emit.find('cnae').text
+    except AttributeError:
+        cnae = 0
+
     return {'nfe_id': nfe_id,
             'emit_cnpj': emit_cnpj,
             'emit_name': emit_nome,
@@ -37,5 +44,7 @@ def get_nfe_info(file_name):
             'dest_name': dest_nome,
             'valor_original_total': valor_original_total,
             'exit_date': dateparse.parse_datetime(exit_date),
-            'venc_dates': venc_dates
+            'venc_dates': venc_dates,
+            'cnae' : cnae,
+            'ncm' : ncm
             }
